@@ -41,7 +41,7 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
 
     static void onModify(auto& self) {
         // Intercept early so other mods see smoothed stream; adjust if needed.
-        (void) self.setHookPriority("GJBaseGameLayer::handleButton", Priority::VeryEarly);
+        (void) self.setHookPriority("GJBaseGameLayer::handleButton", Priority::VeryEarlyPre);
     }
 
     // Safe dispatch of (possibly emulated) input back into the game.
@@ -74,6 +74,8 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
         auto fields = m_fields;
         if (!fields) return;
 
+        auto scheduler = cocos2d::CCDirector::sharedDirector()->getScheduler();
+
         if (!isEnabled()) {
             // Safety: release any virtual holds if disabled mid-hold
             for (auto& [key, st] : fields->states) {
@@ -83,7 +85,7 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
                 }
                 st.physicalHeld = false;
             }
-            cocos2d::CCDirector::sharedDirector()->getScheduler()->unscheduleSelector(schedule_selector(SmoothInputLayer::pulseUpdate), this);
+            scheduler->unscheduleSelector(schedule_selector(SmoothInputLayer::pulseUpdate), this);
             return;
         }
 

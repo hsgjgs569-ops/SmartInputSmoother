@@ -40,17 +40,34 @@ jobs:
         run: |
           echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
 
+      - name: Hack - Fix missing mapping header
+        run: |
+          echo "Hack: Creating missing mapping directory..."
+          mkdir -p build/bindings/bindings/Geode/mapping || true
+          mkdir -p "${{ github.workspace }}/build/bindings/bindings/Geode/mapping" || true
+          for h in CCPoint CCSize CCRect CCObject CCArray CCDictionary CCNode CCString; do
+            cat > "build/bindings/bindings/Geode/mapping/${h}.hpp" <<EOF
+          #pragma once
+          #include <cocos2d.h>
+          using cocos2d::${h};
+          EOF
+            cat > "${{ github.workspace }}/build/bindings/bindings/Geode/mapping/${h}.hpp" <<EOF
+          #pragma once
+          #include <cocos2d.h>
+          using cocos2d::${h};
+          EOF
+          done
+          # extras sometimes referenced
+          echo '#pragma once
+          #include <cocos2d.h>
+          using cocos2d::CCPoint;
+          static const cocos2d::CCPoint CCPointZero = cocos2d::CCPointZero;' > build/bindings/bindings/Geode/mapping/CCPoint.hpp || true
+
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
           target: ${{ matrix.config.target }}
           sdk: 'v2.0.0-beta.27'
-          cli: 'v3.0.0'
-          bindings: 'geode-sdk/bindings'
-          bindings-ref: '0554d64fa67e77183a15dcf03145e00f717da631'
-          combine: true
-          configure-args: '-G Ninja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
-          android-ndk-version: '26.1.10909125'
 
   package:
     name: Package .geode

@@ -27,8 +27,9 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           target: ${{ matrix.config.target }}
-          sdk: 'v4.8.0'
+          sdk: 'v4.10.0'
           combine: true
+          configure-args: '-DCMAKE_UNITY_BUILD=OFF -DGEODE_DISABLE_PRECOMPILED_HEADERS=ON'
 
   package:
     name: Package .geode

@@ -27,6 +27,7 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           target: ${{ matrix.config.target }}
+          sdk: 'v4.8.0'
           combine: true
 
   package:

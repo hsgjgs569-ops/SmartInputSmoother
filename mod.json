@@ -1,0 +1,45 @@
+{
+  "geode": "2.0.0-beta.27",
+  "gd": {
+    "android": "2.205",
+    "win": "2.204"
+  },
+  "id": "user.smartinputsmoother",
+  "name": "SmartInputSmoother",
+  "version": "v1.0.0",
+  "developer": "user",
+  "description": "Умное сглаживание ввода: дробит физические нажатия на микро-клики для более ровной волны при полном контроле игрока.",
+  "tags": ["gameplay", "enhancement", "offline"],
+  "settings": {
+    "enabled": {
+      "name": "Enable",
+      "description": "Включить/выключить сглаживание ввода",
+      "type": "bool",
+      "default": true
+    },
+    "target-cps": {
+      "name": "Target CPS",
+      "description": "Целевая частота микро-кликов при удержании (10–60 CPS)",
+      "type": "int",
+      "default": 30,
+      "min": 10,
+      "max": 60,
+      "control": {
+        "slider": true,
+        "arrows": true,
+        "arrow-step": 1,
+        "big-arrows": true,
+        "big-arrow-step": 5,
+        "input": true,
+        "slider-step": 1
+      }
+    },
+    "smoothing-mode": {
+      "name": "Smoothing Mode",
+      "description": "Режим сглаживания: Linear (равномерные импульсы) или Burst (короткие серии с паузой)",
+      "type": "string",
+      "default": "Linear",
+      "one-of": ["Linear", "Burst"]
+    }
+  }
+}

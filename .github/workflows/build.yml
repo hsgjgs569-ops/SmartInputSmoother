@@ -24,12 +24,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build the mod
-        uses: geode-sdk/build-geode-mod@main
+        uses: geode-sdk/build-geode-mod@v1
         with:
           target: ${{ matrix.config.target }}
           sdk: 'v4.10.0'
           combine: true
-          configure-args: '-DCMAKE_UNITY_BUILD=OFF -DGEODE_DISABLE_PRECOMPILED_HEADERS=ON'
 
   package:
     name: Package .geode
@@ -38,7 +37,7 @@ jobs:
 
     steps:
       - name: Combine builds
-        uses: geode-sdk/build-geode-mod/combine@main
+        uses: geode-sdk/build-geode-mod/combine@v1
         id: build
 
       - name: Upload artifact

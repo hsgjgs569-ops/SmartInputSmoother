@@ -37,6 +37,7 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
     struct Fields {
         bool suppressHook = false;
         std::unordered_map<int, PulseState> states;
+        bool pulseScheduled = false;
     };
 
     static void onModify(auto& self) {
@@ -71,14 +72,11 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
 
     // Pulse engine: called every frame while any physical button is held.
     void pulseUpdate(float dt) {
-        auto fields = m_fields;
-        if (!fields) return;
-
         auto scheduler = cocos2d::CCDirector::sharedDirector()->getScheduler();
 
         if (!isEnabled()) {
             // Safety: release any virtual holds if disabled mid-hold
-            for (auto& [key, st] : fields->states) {
+            for (auto& [key, st] : m_fields->states) {
                 if (st.virtualDown) {
                     st.virtualDown = false;
                     dispatchButton(false, st.button, st.isPlayer1);
@@ -86,6 +84,7 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
                 st.physicalHeld = false;
             }
             scheduler->unscheduleSelector(schedule_selector(SmoothInputLayer::pulseUpdate), this);
+            m_fields->pulseScheduled = false;
             return;
         }
 
@@ -102,7 +101,7 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
         auto& accs = accumMap[this];
 
         bool anyHeld = false;
-        for (auto& [key, st] : fields->states) {
+        for (auto& [key, st] : m_fields->states) {
             if (!st.physicalHeld) continue;
             anyHeld = true;
             auto& ac = accs[key];
@@ -148,36 +147,36 @@ class $modify(SmoothInputLayer, GJBaseGameLayer) {
 
         // cleanup accumulators for keys no longer held
         for (auto it = accs.begin(); it != accs.end(); ) {
-            auto sit = fields->states.find(it->first);
-            if (sit == fields->states.end() || !sit->second.physicalHeld) it = accs.erase(it);
+            auto sit = m_fields->states.find(it->first);
+            if (sit == m_fields->states.end() || !sit->second.physicalHeld) it = accs.erase(it);
             else ++it;
         }
 
         if (!anyHeld) {
             cocos2d::CCDirector::sharedDirector()->getScheduler()->unscheduleSelector(schedule_selector(SmoothInputLayer::pulseUpdate), this);
+            m_fields->pulseScheduled = false;
             accumMap.erase(this);
         }
     }
 
     void ensureScheduled() {
         auto sched = cocos2d::CCDirector::sharedDirector()->getScheduler();
-        if (!sched->isScheduled(schedule_selector(SmoothInputLayer::pulseUpdate), this)) {
+        if (!m_fields->pulseScheduled) {
             // Run every frame for precise timing
             sched->scheduleSelector(schedule_selector(SmoothInputLayer::pulseUpdate), this, 0.f, false);
+            m_fields->pulseScheduled = true;
         }
     }
 
     void handleButton(bool down, int button, bool isPlayer1) {
-        auto fields = m_fields;
-
         // Pass through emulated events and when disabled or when in recursion guard
-        if (fields->suppressHook || !isEnabled()) {
+        if (m_fields->suppressHook || !isEnabled()) {
             GJBaseGameLayer::handleButton(down, button, isPlayer1);
             return;
         }
 
         int key = makeKey(button, isPlayer1);
-        auto& st = fields->states[key];
+        auto& st = m_fields->states[key];
         st.button = button;
         st.isPlayer1 = isPlayer1;
 

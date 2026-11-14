@@ -32,6 +32,7 @@ jobs:
           sdk: 'v2.0.0-beta.27'
           cli: 'v3.0.0'
           combine: true
+          configure-args: '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
 
   package:
     name: Package .geode

@@ -25,6 +25,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          create-symlink: true
+          key: ${{ matrix.config.target }}-v2
+          max-size: 500M
+
+      - name: Install Ninja
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build
+
       - name: Install Android NDK r26b
         run: |
           echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
@@ -36,7 +47,7 @@ jobs:
           sdk: 'v2.0.0-beta.27'
           cli: 'v3.0.0'
           combine: true
-          configure-args: '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
+          configure-args: '-G Ninja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
           android-ndk-version: '26.1.10909125'
           bindings: 'geode-sdk/bindings'
           bindings-ref: '0554d64fa67e77183a15dcf03145e00f717da631'

@@ -45,12 +45,9 @@ jobs:
         with:
           target: ${{ matrix.config.target }}
           sdk: 'v2.0.0-beta.27'
-          cli: 'v3.0.0'
           combine: true
           configure-args: '-G Ninja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
           android-ndk-version: '26.1.10909125'
-          bindings: 'geode-sdk/bindings'
-          bindings-ref: '0554d64fa67e77183a15dcf03145e00f717da631'
 
   package:
     name: Package .geode

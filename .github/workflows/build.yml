@@ -25,6 +25,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install Android NDK r26b
+        run: |
+          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
+
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
@@ -33,7 +37,7 @@ jobs:
           cli: 'v3.0.0'
           combine: true
           configure-args: '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
-          android-ndk-version: '27.0.12077973'
+          android-ndk-version: '26.1.10909125'
 
   package:
     name: Package .geode

@@ -44,7 +44,8 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           target: ${{ matrix.config.target }}
-          sdk: 'v2.0.0'
+          sdk: 'v2.0.0-beta.27'
+          cli: 'v3.0.0'
           combine: true
           configure-args: '-G Ninja -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_POLICY_VERSION_MINIMUM=3.5'
           android-ndk-version: '26.1.10909125'

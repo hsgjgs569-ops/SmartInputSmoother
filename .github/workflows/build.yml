@@ -38,6 +38,8 @@ jobs:
           combine: true
           configure-args: '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
           android-ndk-version: '26.1.10909125'
+          bindings: 'geode-sdk/bindings'
+          bindings-ref: '0554d64fa6'
 
   package:
     name: Package .geode

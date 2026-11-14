@@ -33,7 +33,7 @@ jobs:
           cli: 'v3.0.0'
           combine: true
           configure-args: '-DCMAKE_POLICY_VERSION_MINIMUM=3.5'
-          android-ndk-version: 'r26d'
+          android-ndk-version: '26.1.10909125'
 
   package:
     name: Package .geode
